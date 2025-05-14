@@ -1,7 +1,10 @@
 package kr.or.ddit.controller;
 
 import kr.or.ddit.dto.LprodForm;
+import kr.or.ddit.entity.Lprod;
+import kr.or.ddit.repository.LprodRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +16,8 @@ import java.util.Map;
 @Slf4j
 @Controller
 public class LprodController {
+    @Autowired
+    private LprodRepository lprodRepository;
 
     @GetMapping("/lprod/new")
     public String newArticleForm() {
@@ -35,6 +40,14 @@ public class LprodController {
          log.info("lprodGu: " + lprodGu);
          log.info("lprodName: " + lprodNm);
          log.info("map: " + map);
+
+        //1. DTO(form)를 엔티티(lprod)로 변환
+        Lprod lprod = form.toEntity();
+        log.info("createLprod->lprod : " + lprod);
+
+        //2. 리파지터리로 엔티티를 DB에 저장
+        Lprod saved = this.lprodRepository.save(lprod);
+        log.info("createLprod->saved : " + saved);
 
         return "redirect:/lprod/new";
 
