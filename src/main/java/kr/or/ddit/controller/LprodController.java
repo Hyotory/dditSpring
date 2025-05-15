@@ -6,11 +6,10 @@ import kr.or.ddit.repository.LprodRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 @Slf4j
@@ -65,6 +64,46 @@ public class LprodController {
 
         // 데이터
         return "success";
-
     }
+
+    /*
+    요청URI : /lprod/1
+    요청파라미터 :
+    요청방식 : get
+     */
+    @GetMapping("/lprods/{lprodId}")
+    public String show(@PathVariable(value="lprodId") long lprodId, Model model){
+        //id를 잘 받았는지 확인하는 로그 찍기
+        log.info("show -> lprodId: {}", lprodId);
+        log.info("show -> lprodId: " + lprodId);
+
+        //1. id를 조회해 데이터 가져오기
+        // findById()는 JPA의 CrudRepository가 제공하는 메서드로, 특정 엔티티의 id 값을 기준으로
+        //  데이터를 찾아 Optional 타입으로 반환.
+        //orElse(null) : id 값으로 데이터를 찾을 때 해당 id 값이 없으면 null을 반환.
+        // 데이터를 조회한 결과, 값이 있으면 lprodEntity 변수에 값을 넣고 없으면
+        //  null을 저장
+        Lprod lprodEntity = this.lprodRepository.findById(lprodId).orElse(null);
+        log.info("show -> lprodEntity: " + lprodEntity);
+
+        //2. 모델에 데이터 등록하기
+        //lprod이라는 이름으로 value인 lprodEntity 객체 추가
+        model.addAttribute("lprod", lprodEntity);
+
+        //3. 뷰 페이지 반환하기
+        // 뷰 페이지는 lprod라는 디렉터리 안에 show라는 파일이 있다는 의미
+        return "lprod/show";
+    }
+    /*
+    요청URI : /lprods
+    요청파라미터 :
+    요청방식 : get
+     */
+    @GetMapping("/lprods")
+    public String index(Model model) {
+        ArrayList<Lprod> lprodEntityList = this.lprodRepository.findAll();
+        model.addAttribute("lprodList", lprodEntityList);
+        return "lprod/index";
+    }
+
 }

@@ -1,10 +1,8 @@
 package kr.or.ddit.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -18,6 +16,7 @@ DB에 테이블이 생성됨. 테이블 이름은 클래스 이름과 동일하�
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Getter
 public class Article {
     //Id가 빨간색으로 표시되면 마우스를 올린 후 Alt + Enter를 누르고
     //  Id(jakarta.persistence)를 선택
@@ -28,7 +27,7 @@ public class Article {
     // 3. Id : 엔티티의 대푯값 지정
     // 3. GeneratedValue : 자동 생성 기능 추가(숫자가 자동으로 매겨짐)
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     /*
     DTO 코드를 작성할 때와 같이 title, content 필드 선언
@@ -41,6 +40,12 @@ public class Article {
     //2. content 필드 선언, DB 테이블의 content 열과 연결됨
     @Column
     private String content;
+    
+    /* @Getter로 대체
+    public Long getId() {
+        return this.id;
+    }
+     */
 
     // Article 생성자 추가
     /* AllArgsConstructor로 대체

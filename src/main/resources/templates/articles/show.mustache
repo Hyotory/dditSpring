@@ -3,9 +3,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
+    <link rel="stylesheet" href="/adminlte/dist/css/adminlte.min.css" />
 </head>
 <body>
     <h2>글 상세보기</h2>
+    <table class="table">
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Content</th>
+        </tr>
+        <!--
+        articleEntity : Article(id=1, title=개똥이의 모험, content=즐거운 모험)
+        model.addAttribute("article",articleEntity);
+        -->
+        {{#article}}
+            <tr>
+                <th>{{id}}</th>
+                <th>{{title}}</th>
+                <th>{{content}}</th>
+            </tr>
+        {{/article}}
+    </table>
+    <a href="/articles" class="btn btn-primary">목록</a>
 
 </body>
 </html>
