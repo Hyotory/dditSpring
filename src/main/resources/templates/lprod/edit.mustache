@@ -1,0 +1,28 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/adminlte/dist/css/adminlte.min.css">
+    <title>Document</title>
+</head>
+<body>
+
+    {{lprod}}
+    <form class="container" action="/lprod/update" method="post">
+        <!-- 폼 데이터 -->
+        <input type="text" name="lprodId" value="{{lprod.lprodId}}" />
+        <div class="mb-3">
+            <label class="form-label">상품분류 구분코드</label>
+            <input type="text" class="form-control" name="lprodGu" value="{{lprod.lprodGu}}" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">상품분류 명</label>
+            <textarea class="form-control" rows="3" name="lprodNm">{{lprod.lprodNm}}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">확인</button>
+        <!-- 글상세 URI : /articles/2 -->
+        <a href="/lprod/{{lprod.lprodId}}" class="btn btn-secondary">Back</a>
+    </form>
+    <!-- ///// body 끝 ///// -->
+</body>
+</html>

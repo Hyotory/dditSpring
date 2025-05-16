@@ -6,19 +6,19 @@
     <link rel="stylesheet" href="/adminlte/dist/css/adminlte.min.css" />
 </head>
 <body>
-    <h2>상품분류 상세보기</h2>
-    <table class="table">
-        <tr>
-            <th>상품 분류 아이디</th>
-            <th>상품 분류 구분코드</th>
-            <th>상품 분류 명</th>
-        </tr>
-        <!--
-        lprodEntity : Lprod(lprodId=1, lprodGu=P101, lprodNm=컴퓨터제품)
-        model.addAttribute("lprod",lprodEntity);
+<h2>상품분류 상세보기</h2>
+<table class="table">
+    <tr>
+        <th>상품분류 아이디</th>
+        <th>상품분류 구분코드</th>
+        <th>상품분류 명</th>
+    </tr>
+    <!--
+    lprodEntity : lprod(lprodId=1, lprodGu=P101, lprodNm=컴퓨터제품)
+    model.addAttribute("lprod",lprodEntity);
 
-        lprod의 사용 범위 내에 lprod에 담긴 lprodId, lprodGu, lprodNm의 값으로 치환
-        -->
+    lprod의 사용 범위 내에 lprod에 담긴 lprodId, lprodGu, lprodNm의 값으로 치환
+    -->
     {{#lprod}}
         <tr>
             <td>{{lprodId}}</td>
@@ -26,7 +26,10 @@
             <td>{{lprodNm}}</td>
         </tr>
     {{/lprod}}
-    </table>
-    <a href="/lprods" class="btn btn-primary">목록</a>
+</table>
+<a href="/lprod" class="btn btn-primary">목록</a>
+<a href="/lprod/{{lprod.lprodId}}/edit" class="btn btn-warning">수정</a>
+<a href="/lprod/{{lprod.lprodId}}/delete" class="btn btn-danger">삭제</a>
+
 </body>
 </html>

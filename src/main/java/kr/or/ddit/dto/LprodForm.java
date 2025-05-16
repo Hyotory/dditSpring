@@ -1,25 +1,28 @@
 package kr.or.ddit.dto;
 
 import kr.or.ddit.entity.Lprod;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class LprodForm {
 
-    private int lprodId;
+
+    private Long lprodId;
     private String lprodGu;
     private String lprodNm;
 
-//    public LprodForm() {
-//    }
+    // 기본생성자 NoArgsConstructor
+    // public LprodForm() {}
 
-    public int getLprodId() {
+    public Long getLprodId() {
         return lprodId;
     }
 
-    public void setLprodId(int lprodId) {
+    public void setLprodId(Long lprodId) {
         this.lprodId = lprodId;
     }
 
@@ -39,8 +42,10 @@ public class LprodForm {
         this.lprodNm = lprodNm;
     }
 
+
     public Lprod toEntity() {
-        Lprod lprod = new Lprod(null, this.lprodGu, this.lprodNm);
+
+        Lprod lprod = new Lprod(this.lprodId, lprodGu, lprodNm);
         return lprod;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 
@@ -116,10 +117,9 @@ public class FirstController {
         //article 엔티티를 H2 DBMS에 insert 된 후 그 행을 객체형태로 반환
         //vs MyBATIS의 경우 return type은 int 타입 반환
         Article saved = this.articleRepository.save(article);
-        //saved : Article(id=1, title=개똥이의 모험1, content=즐거운 모험1)
         log.info("createArticle->saved: " + saved); // Entity
 
-        // 기존 : get방식으로 articles/new URL을 재요청(리다이렉트)
+        // 기존: get방식으로 articles/new URL을 재요청(리다이렉트)
         //해당 글이 잘 등록됐음을 알려 주는 상세 페이지가 나올 수 있도록 리다이렉트 개념을 적용해보자
         return "redirect:/articles/"+saved.getId();
     }
@@ -162,17 +162,112 @@ public class FirstController {
     public String index(Model model) {
         //1. 모든 데이터 가져오기
         //findAll() 메서드의 반환 데이터 타입은 Iterable. List라서 불일치
-        //첫째, 캐스팅(형변환). Iteratable, Collection, LList 인터페이스의 상하 관계는 Iteratable이 가장 상위 인터페이스
+        //첫째, 캐스팅(형변환). Iteratable, Collection,
+        // LList 인터페이스의 상하 관계는 Iteratable이 가장 상위 인터페이스
         ArrayList<Article> articleEntityList = this.articleRepository.findAll();
-
         //2. 모델에 데이터 등록하기
         model.addAttribute("articleList",articleEntityList);
 
         //3. 뷰 페이지 설정하기
         // articles 디렉터리 안에 index.mustache 파일이 뷰 페이지로 설정
-        // forwarding: mustache
+        //forwarding : mustache
         return "articles/index";
     }
+
+    //URL 요청 접수
+    /*
+    요청URI : /articles/3/edit
+    경로변수(PathVariable) : id     (entity의 기본키 id를 보통 잡음)
+    요청방식 : get
+     */
+    //URL 주소에 있는 id를 받아오는 것이므로 데이터 타입 앞에 @PathVariable 애너테이션을 추가
+    @GetMapping("/articles/{id}/edit") // PathVariable 문법이라 {} 하나만
+    public String edit(@PathVariable(value = "id") Long id, Model model) {
+        log.info("edit-> id : " + id);
+        //H2 DB(공유, 저장, 통합, 운영)MS에서 수정할 데이터 가져오기
+        //DB에서 데이터를 가져올 때는 리파지터리를 이용.
+        //만약 데이터를 찾지 못하면 null을 반환, 데이터를 찾았다면 Article 타입의 articleEntity로 작성함
+        Article articleEntity = this.articleRepository.findById(id).orElse(null);
+        log.info("edit-> articleEntity : " +articleEntity);
+        // DI (의존성 주입)
+        //모델에 데이터 등록하기
+        //articleEntity를 article로 등록
+        model.addAttribute("article",articleEntity);
+
+        //뷰 페이지 설정
+        // /tempates/articles/edit.mustache 포워딩
+        return "articles/edit";
+    }
+
+    /*
+    요청URI : /articles/update
+    요청파라미터 : request{id=2,title=개똥이개똥이,content=즐거워즐거워}
+    요청방식 : post
+
+    URL 요청 접수
+    매개변수로 DTO 받아 오기
+     */
+    @PostMapping("/articles/update")
+    public String update(ArticleForm form) {
+
+        log.info("update-> form : " +form);
+        //        1. DTO를 엔티티로 변환
+        //DTO(form)를 엔티티(articleEntity)로 변환
+        Article articleEntity = form.toEntity();
+        log.info("update-> articleEntity : " +articleEntity);
+
+        //        2. 엔티티를 DB에 저장
+        //2-1. DB에서 기존 데이터 가져오기(검증)
+        Article target = this.articleRepository.findById(articleEntity.getId()).orElse(null);
+        log.info("update-> target : " +target);
+        //2-2. 기존 데이터 값을 갱신하기
+        //엔티티를 DB에 저장(갱신)
+        if(target != null) {//검증완료
+            this.articleRepository.save(articleEntity);
+            // form을 복사하여 entity를 만듬
+            // dto 보다는 entity type을 넣어주는게 좋다.
+
+        }
+        //        3. 수정 결과 페이지로 리다이렉트(상세 보기) : 새로운 URI를 재요청
+        return "redirect:/articles/"+articleEntity.getId();
+
+    }
+
+    /* 글 삭제
+    요청URI : /articles/3/delete
+    경로변수 : id(Article 타입의 엔티티의 기본키-식별자)
+    요청방식 : get
+     */
+    @GetMapping("/articles/{id}/delete")
+    public String delete(@PathVariable(value = "id") Long id,
+                         RedirectAttributes rttr) {
+        // 로그: 삭제 요청이 수신되었음을 기록합니다.
+        log.info("delete-> id : " + id);
+        //1) 삭제할 대상 가져오기
+        // articleRepository를 사용하여 전달받은 id로 Article 엔티티를 데이터베이스에서 조회합니다.
+        // 만약 해당 id의 엔티티가 존재하지 않으면 null을 반환합니다.
+        // 로그: 조회된 삭제 대상 엔티티 정보를 기록합니다.
+        Article target = this.articleRepository.findById(id).orElse(null);
+        log.info("delete-> target : " +target);
+        //2) 대상 엔티티 삭제하기
+        //삭제할 대상이 있는지 확인
+        // 조회된 엔티티(target)가 null이 아닌지, 즉 삭제할 대상이 존재하는지 확인합니다.
+        if(target != null) {
+            //delete() 메서드로 대상 삭제
+            this.articleRepository.delete(target);
+            // articleRepository의 delete() 메소드를 호출하여 데이터베이스에서 해당 엔티티를 삭제합니다.
+            // RedirectAttributes 객체에 "msg"라는 이름으로 "삭제했습니다"라는 메시지를 추가합니다.
+            // 이 메시지는 리다이렉트된 페이지에서 한 번만 사용할 수 있는 일회성 데이터입니다.
+            // 이해비법 : redirect 시 사용되는 model(forwarding 시 사용)이라고 생각해도 됨
+            rttr.addFlashAttribute("msg","삭제했습니다");
+        }
+        //3) 결과 페이지로 리다이렉트하기
+        // 글 목록 페이지(/articles)로 리다이렉트(새로운 URI 재요청)합니다.
+        return "redirect:/articles";
+
+    }
+
+
 
 
 }

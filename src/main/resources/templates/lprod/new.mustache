@@ -2,17 +2,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/adminlte/dist/css/adminlte.css" />
+    <link rel="stylesheet" href="/adminlte/dist/css/adminlte.min.css">
     <title>Document</title>
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.85em;
+            display: none;
+        }
+    </style>
 </head>
 <body>
+
 <!--
-요청URI :  /articles/new
+요청URI : /articles/new
 요청파라미터 :
 요청방식 : get
 -->
-
-
 <!-- ///// body 시작 ///// -->
 <!--
 action : 요청URL. localhost:8030/articles/create 페이지로 폼 데이터를 보낸다는 의미
@@ -28,26 +34,23 @@ method : 속성 값으로 get과 post, 2가지를 설정할 수 있음.
         return "lprod/new"; //forwarding
 2-2. submit 처리. createLprod() 메소드. LprodForm 타입의 form 매개변수로 파라미터 받기
         return "redirect:/lprod/new";
-
 -->
-
-<form class="container" action="/lprod/create" method="post">
+<form class="container" action="/lprod/create" method="post" onsubmit="return validateForm()">
     <div class="mb-3">
-        <label class="form-label">상품 분류 아이디</label>
-        <input type="text" class="form-control" name="lprodId" />
+        <label class="form-label">상품분류 번호</label>
+        <input type="text" class="form-control" name="lprodId" id="lprodId" />
     </div>
     <div class="mb-3">
-        <label class="form-label">상품분류 코드</label>
-        <input type="text" class="form-control"  name="lprodGu"/>
+        <label class="form-label">상품분류 구분코드</label>
+        <input type="text" class="form-control" name="lprodGu" />
     </div>
     <div class="mb-3">
         <label class="form-label">상품분류 명</label>
-        <input type="text" class="form-control"  name="lprodNm"/>
+        <input type="text" class="form-control" name="lprodNm" />
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
-    <a href="/lprods" class="btn btn-secondary">목록</a>
+    <a href="/lprod" class="btn btn-secondary">목록</a>
 </form>
-<!-- ///// body 끝 ///// -->
 
 </body>
 </html>
