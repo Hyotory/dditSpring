@@ -4,6 +4,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
     <link rel="stylesheet" href="/adminlte/dist/css/adminlte.min.css" />
+    <!-- jQuery -->
+    <script src="/adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        //document 내 모든 엘리먼트가 로딩된 후에 실행
+        $(function() {
+            // 아작나써유.. (피)씨다타써
+            // contentType:
+            // dataType:
+            $.ajax({
+                url: "/api/articles/2",
+                type: "get",
+                dataType: "json",
+                success:function(result) {
+                    console.log("result: ",result);
+            }
+            })
+        });
+    </script>
 </head>
 <body>
 <h2>글 상세보기</h2>
