@@ -101,7 +101,7 @@ public class LprodController {
     요청파라미터 :
     요청방식 : get
      */
-    @GetMapping("/lprod")
+    @GetMapping("/lprods")
     public String index(Model model) {
         //1. 모든 데이터 가져오기
         //findAll() 메서드의 반환 데이터 타입은 Iterable. List라서 불일치

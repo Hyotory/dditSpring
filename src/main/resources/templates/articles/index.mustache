@@ -36,6 +36,9 @@
                         success:function(result){
                             //result{"id": 2,"title": "개똥이의 여행2","content": "즐거운 여행2"}
                             console.log("result : ", result);
+                            $("#modalTitle").html(result.title); // 모달의 제목
+                            $("#modalContent").html(result.content); // 모달의 내용
+
                         }
                     });
                 })
@@ -86,7 +89,7 @@
                         str += `
                                     <tr>
                                         <td>${article.id}</td>
-                                        <td><a href="#" class="clsTd" data-id="${article.id}" data-toggle="modal" data-target="#modal-lg">${article.title}</a></td>
+                                        <td><a href="#" class="clsTd" data-id="${article.id}" data-toggle="modal" data-target="#modalLg">${article.title}</a></td>
                                         <td>${article.content}</td>
                                     </tr>
                             `;
@@ -180,17 +183,17 @@
 <!-- /.content -->
 
 <!-- 글 상세 modal 시작 -->
-<div class="modal fade" id="modal-lg">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="modalLg">
+    <div class="modal-dialog modalLg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Large Modal</h4>
+                <h4 class="modal-title" id="modalTitle">Large Modal</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>One fine body&hellip;</p>
+                <p id="modalContent">One fine body&hellip;</p>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
