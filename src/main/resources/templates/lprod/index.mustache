@@ -10,23 +10,71 @@
 
     <title>Document</title>
     <script>
-        $(function(){
+        // $(function(){
+        document.addEventListener("DOMContentLoaded", function() {
+
             //비동기 상세 모달
             //동적으로 생성 된 클래스 속성의 값이 clsTd인 요소들을 클릭
-            $(document).on('click', ".clsTd",function(){
+            // $(document).on('click', ".clsTd",function(){
+
+            // document에 이벤트 리스너를 등록하여 동적으로 생성된 요소에도
+            //이벤트 처리를 위임(delegation)함
+            document.addEventListener("click", function(event) {
+
                 // 그것들 중에서 클릭한 바로 그 엘리먼트
                 // 달러(this): <a href="#" class="clsTd" data-lpord-id="2">P102</a>
-                let lprodId = $(this).data('lprodId');
-                console.log("lprodId: ",lprodId);
 
-                $.ajax({
-                    url: `/api/lprod/${lprodId}`,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(result){
-                        console.log("result: ",result);
-                    }
+                // 클릭된 요소가 class="clsTd"를 갖고 있는지 확인
+                let lprodId = event.target.dataset.lprodId;
+
+                if(event.target.classList.contains("clsTd")) {
+                    //let lprodId = $(this).data('lprodId');
+                    console.log("lprodId: ",lprodId);
+
+                } else{ //클릭된요소가 class="clsTd"를 가지고 있지 않을 때
+                    // 함수 자체를 종료
+                    return;
+                }
+                //백틱에서 J/S변수는 달러{}로 처리
+                fetch(`/api/lprod/${lprodId}`, {
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
                 })
+                        .then(response => response.json())// 서버로부터의 응답을 JSON 형태로 파싱합니다.
+                        .then(result =>{
+                            console.log("result: ", result);
+                            // 1. 모달의 id가 "modalLprodGu"인 요소의 내용을 서버에서 받은 lprodGu 값으로 업데이트
+                            const modalLprodGuElement = document.getElementById("modalLprodGu");
+                            if(modalLprodGuElement){
+                                modalLprodGuElement.textContent = result.lprodGu;
+
+                            // document.getElementById("modalLprodGu").innerHTML = result["lprodGu"];
+                            }
+                            // 2. 모달의 id가 "modalLprodNm"인 요소의 내용을 서버에서 받은 lprodNm 값으로 업데이트
+                            const modalLprodNmElement = document.getElementById("modalLprodNm");
+                            if(modalLprodNmElement) {
+                                modalLprodNmElement.textContent = result.lprodNm;
+                            }
+                            //document.getElementById("modalLprodNm").innerHTML = result["lprodNm"];
+
+                        })// JSON 형태로 파싱된 result를 통해 비즈니스로직 수행
+                        .catch( error => {
+                            console.log('error: ',error);
+                                }
+                        )// 오류 처리
+
+                // $.ajax({
+                //     url: `/api/lprod/${lprodId}`,
+                //     type: "GET",
+                //     dataType: "json",
+                //     success: function(result){
+                //         console.log("result: ",result);
+                //
+                //         $("#modalLprodGu").html(result.lprodGu);
+                //
+                //         $("#modalLprodNm").html(result.lprodNm);
+                //     }
+                // })
             })
             //비동기 목록 출력
             //아작나써유..(피)(씨다)타써
@@ -52,7 +100,7 @@
                     str += `
                             <tr>
                                 <td>${lprod.lprodId}</td>
-                                <td><a href="#" class="clsTd" data-lprod-id="${lprod.lprodId}"> ${lprod.lprodGu}</a></td>
+                                <td><a class="clsTd" data-lprod-id="${lprod.lprodId}" data-toggle="modal" href="#modalLg">${lprod.lprodGu}</a></td>
                                 <td>${lprod.lprodNm}</td>
                             </tr>
                             `;
@@ -104,6 +152,38 @@
     </div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->
+
+
+<!--///글 상세 모달 시작
+{
+    "lprodId": 1,
+    "lprodGu": "P201",
+    "lprodNm": "전자제품"
+}
+///-->
+<!-- 글 상세 modal 시작 -->
+<div class="modal fade" id="modalLg">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalLprodGu"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalLprodNm"></p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--///글 상세 모달 끝 ///-->
 
 
 </body>

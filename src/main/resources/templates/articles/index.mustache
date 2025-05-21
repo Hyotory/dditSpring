@@ -10,37 +10,130 @@
     <script src="/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <title>Document</title>
     <script>
+        let id ='';
+        let title = '';
+        let content = '';
         // document의 모든 요소들이 로딩된 후에 실행
         //$(function() {
             document.addEventListener("DOMContentLoaded", () => {
                 console.log("개똥이");
+
+                /* 글 수정 취소*/
+                $("#modalBtnCancel").on("click", function () {
+
+                    // 전역 변수에는 문자열이 있음
+                    $("#modalTitle").html(title);
+                    $("#modalContent").html(content);
+
+                    // 4. 일반 모드 변환
+                    $("#spnGen").css("display", "block"); // 일반 영역 안보이게
+                    $("#spnEdit").css("display", "none"); // 수정 영역 보이게
+                })
+
+                /* 글 수정 폼*/
+                $("#modalBtnEdit").on("click", function() {
+                    //1. id, title, content의 값을 변수에 저장
+                     id = $("#modalId").val();
+                     title = $("#modalTitle").html();
+                     content = $("#modalContent").html();
+
+                    console.log("id",id);
+                    console.log("title",title);
+                    console.log("content",content);
+
+                    //2. id="modalTitle" 요소 안에 text 처리
+                    let strTitle = `
+                    <input type="text" class="form-control" id="modalIptTitle" value="${title}" placeholder="글 제목">
+                    `;
+                    $("#modalTitle").html(strTitle);
+
+                    //3. id="modalContent" 요소 안에 text 처리
+                    let strContent = `
+                    <input type="text" class="form-control" id="modalIptContent" value="${content}" placeholder="글 내용">
+                    `;
+                    $("#modalContent").html(strContent);
+
+                    // 4. 수정 모드 변환
+                    $("#spnGen").css("display", "none"); // 일반 영역 안보이게
+                    $("#spnEdit").css("display", "block"); // 수정 영역 보이게
+
+                })
+
 
                 /* 글 상세
                 <a href="#" class="clsTd" data-id="1">개똥이의 여행</a> 에서 id값 추출
 
               동적으로 생성된 element의 경우 document로 접근해야 함
               */
-                $(document).on("click", ".clsTd", function (e) {
+                // $(document).on("click", ".clsTd", function (e) {
+                document.addEventListener("click", function(event) {
+
                     // this: 그 중에서 방금 클릭한 바로 그 element
                     // <a href="#" class="clsTd" data-id="2">개똥이의 여행2</a>
-                    let id = $(this).data("id"); // 2
-                    console.log("clicked id: ",id);
+                    // let id = $(this).data("id"); // 2
+
+
+                    let id = event.target.dataset.id;
+                    if(event.target.classList.contains("clsTd")) {
+                        console.log("clicked id: ",id);
+                        //let lprodId = $(this).data('lprodId');
+
+                    } else{ //클릭된요소가 class="clsTd"를 가지고 있지 않을 때
+                        // 함수 자체를 종료
+                        return;
+                    }
+
+                    //백틱에서 J/S변수는 달러{}로 처리
+                    fetch(`/api/articles/${id}`, {
+                        method: "GET",
+                        headers: {"Content-Type": "application/json"}
+                    })
+                            .then(response => response.json())// 서버로부터의 응답을 JSON 형태로 파싱합니다.
+                            .then(result =>{
+                                console.log("result: ", result);
+
+                                document.getElementById("modalId").value = result.id;
+
+
+                                // 1. 모달의 id가 "modalLprodGu"인 요소의 내용을 서버에서 받은 lprodGu 값으로 업데이트
+                                const modalTitleElement = document.getElementById("modalTitle");
+                                if(modalTitleElement){
+                                    modalTitleElement.textContent = result.title;
+
+                                    // document.getElementById("modalLprodGu").innerHTML = result["lprodGu"];
+                                }
+                                // 2. 모달의 id가 "modalLprodNm"인 요소의 내용을 서버에서 받은 lprodNm 값으로 업데이트
+                                const modalContentElement = document.getElementById("modalContent");
+                                if(modalContentElement) {
+                                    modalContentElement.textContent = result.content;
+                                }
+                                //document.getElementById("modalLprodNm").innerHTML = result["lprodNm"];
+
+                                // 4. 일반 모드 변환
+                                $("#spnGen").css("display", "block"); // 일반 영역 안보이게
+                                $("#spnEdit").css("display", "none"); // 수정 영역 보이게
+
+                            })// JSON 형태로 파싱된 result를 통해 비즈니스로직 수행
+                            .catch( error => {
+                                        console.log('error: ',error);
+                                    }
+                            )// 오류 처리
 
                     //아작나써유..(피)씨다타써
                     //contentType : 보내는 타입
                     //dataType : 응답타입
-                    $.ajax({
-                        url:"/api/articles/"+id,
-                        type:"get",
-                        dataType:"json",
-                        success:function(result){
-                            //result{"id": 2,"title": "개똥이의 여행2","content": "즐거운 여행2"}
-                            console.log("result : ", result);
-                            $("#modalTitle").html(result.title); // 모달의 제목
-                            $("#modalContent").html(result.content); // 모달의 내용
-
-                        }
-                    });
+                    // $.ajax({
+                    //     url:"/api/articles/"+id,
+                    //     type:"get",
+                    //     dataType:"json",
+                    //     success:function(result){
+                    //         //result{"id": 2,"title": "개똥이의 여행2","content": "즐거운 여행2"}
+                    //         console.log("result : ", result);
+                    //         $("#modalTitle").html(result.title); // 모달의 제목
+                    //         $("#modalContent").html(result.content); // 모달의 내용
+                    //
+                    //     }
+                    // });
                 })
 
 
@@ -193,11 +286,21 @@
                 </button>
             </div>
             <div class="modal-body">
+                <input type="text" id="modalId" />
                 <p id="modalContent">One fine body&hellip;</p>
             </div>
-            <div class="modal-footer justify-content-between">
+            <div class="modal-footer justify-content">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <!-- 일반 모드 -->
+                <span id="spnGen">
+                    <button type="button" class="btn btn-warning" id="modalBtnEdit">수정</button>
+                    <button type="button" class="btn btn-danger" id="modalBtnDelete">삭제</button>
+                </span>
+                <!-- 수정 모드 (기본 숨김 처리)-->
+                <span id="spnEdit" style="display:none;">
+                    <button type="button" class="btn btn-primary" id="modalBtnConfirm">확인</button>
+                    <button type="button" class="btn btn-secondary" id="modalBtnCancel">취소</button>
+                </span>
             </div>
         </div>
         <!-- /.modal-content -->
