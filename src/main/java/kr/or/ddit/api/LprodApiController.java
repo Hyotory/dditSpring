@@ -66,4 +66,36 @@ public class LprodApiController {
         }
         return target;
     }
+
+    /* 글 삭제
+    요청URI : api/lprods/delete
+    요청 파라미터 : JSON String{id: 2}
+    요청방식 : POST
+
+    @RequestBody Long id => 실패
+    @RequestBody ArticleForm articleForm => 성공
+     */
+    @PostMapping("/lprods/delete")
+    public Lprod delete(@RequestBody LprodForm lprodForm) {
+        // 로그: 삭제 요청이 수신되었음을 기록합니다.
+        log.info("delete-> lprodForm : " + lprodForm);
+        Long lprodId = lprodForm.getLprodId();
+        log.info("delete-> id : " + lprodId);
+
+        //1) 삭제할 대상 가져오기
+        // lprodRepository를 사용하여 전달받은 id로 Lprod 엔티티를 데이터베이스에서 조회합니다.
+        // 만약 해당 id의 엔티티가 존재하지 않으면 null을 반환합니다.
+        // 로그: 조회된 삭제 대상 엔티티 정보를 기록합니다.
+        Lprod target = this.lprodRepository.findById(lprodId).orElse(null);
+        log.info("delete-> target : " +target);
+        //2) 대상 엔티티 삭제하기
+        //삭제할 대상이 있는지 확인
+        // 조회된 엔티티(target)가 null이 아닌지, 즉 삭제할 대상이 존재하는지 확인합니다.
+        if(target != null) {
+            //delete() 메서드로 대상 삭제
+            this.lprodRepository.delete(target);
+        }
+        return target;
+
+    }
 }

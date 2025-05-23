@@ -45,7 +45,52 @@
 
         // $(function(){
         document.addEventListener("DOMContentLoaded", function() {
+
             getLprodList();
+
+            // 글 삭제 실행
+            // modalBtnDelete
+            $("#modalBtnDelete").on("click", function(){
+                lprodId = $("#modalLprodId").val();
+                console.log(" lprodId : ", lprodId);
+
+                /* 글 삭제
+               요청URI : api/articles/delete
+               요청 파라미터 : JSON String{id: 2}
+               요청방식 : POST
+                */
+
+                let data = {
+                    "lprodId": lprodId
+                };
+                console.log('data: ',data);
+
+                if(confirm("정말 삭제하시겠습니까?")) {
+                    // 아작나써유.. (피)씨다타써
+                    $.ajax({
+                        url: "/api/lprods/delete",
+                        contentType: "application/json;charset=UTF-8",
+                        data: JSON.stringify(data),
+                        type: "POST",
+                        success: function(result) {
+                            // result: Article 타입의 JSON String -> JSON Object
+                            console.log('result: ',result);
+
+                            // 모달 닫기
+                            $("#modal-lg").modal("hide");
+
+                            // 목록 리로드
+                            getLprodList();
+                        }
+                    })
+
+                } else{
+                    return;
+                }
+
+
+            });
+
             $("#modalBtnConfirm").on("click", function() {
                 lprodId = $("#modalLprodId").val();
                 lprodGu = $("#modalIptLprodGu").val();

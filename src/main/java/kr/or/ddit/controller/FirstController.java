@@ -3,6 +3,7 @@ package kr.or.ddit.controller;
 import kr.or.ddit.dto.ArticleForm;
 import kr.or.ddit.entity.Article;
 import kr.or.ddit.repository.ArticleRepository;
+import kr.or.ddit.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,10 @@ public class FirstController {
     // 의존성 주입 DI(Dependency Injection)
     @Autowired
     private ArticleRepository articleRepository;
+
+    @Autowired
+    private ArticleService articleService;
+
 
 
     // 메서드 작성
